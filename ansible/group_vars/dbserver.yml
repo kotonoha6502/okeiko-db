@@ -1,0 +1,21 @@
+mysql_enablerepo: "mariadb-main"
+mysql_packages:
+  - MariaDB-server
+  - MariaDB-client
+  - python3-PyMySQL
+
+mysql_pid_file: /var/lib/mysql/mysql.pid
+mysql_root_password: "{{ secret.mysql_root_password }}"
+mysql_root_password_update: false
+mysql_databases:
+   - name: okeiko
+     encoding: utf8mb4
+     collation: utf8mb4_general_ci
+  
+mysql_uses: "{{ secret.mysql_users }}"
+mysql_slow_query_log_enabled: yes
+mysql_slow_query_time: "0.5"
+mysql_slow_query_log_file: "/var/lib/mysql/slow_query.log"
+
+firewalld_allow_ports:
+  - { port: "3306/tcp" }

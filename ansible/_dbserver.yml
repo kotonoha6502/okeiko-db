@@ -1,0 +1,11 @@
+---
+- hosts: dbserver
+  become: yes
+  become_user: root
+  pre_tasks:
+    - include_vars: "stage_vars/{{ stage }}/dbserver.yml"
+  ignore_errors: yes
+  roles:
+    - kotolab.repo-mariadb
+    - geerlingguy.mysql
+    - marcelnijenhof.firewalld

@@ -1,0 +1,8 @@
+secret:
+  mysql_root_password: "rootpasswd"
+  mysql_users:
+    - name: "test"
+      host: "%"
+      password: "testpasswd"
+      priv: "test.*:ALL"
+      append_privs: yes

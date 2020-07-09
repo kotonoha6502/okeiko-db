@@ -1,0 +1,8 @@
+timezone: Asia/Tokyo
+
+common_packages:
+  - make
+  - autoconf
+  - curl
+  - tree
+  - expect

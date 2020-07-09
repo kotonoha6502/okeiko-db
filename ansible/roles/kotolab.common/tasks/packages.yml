@@ -1,0 +1,11 @@
+---
+- name: Install common packages
+  package:
+    name: "{{ common_packages }}"
+    state: "{{ commom_packages_state }}"
+
+- name: Install Development tools package group(localdev only)
+  package:
+    name: '@Development tools'
+    state: "{{ commom_packages_state }}"
+  when: stage == "localdev"

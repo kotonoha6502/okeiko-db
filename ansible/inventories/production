@@ -1,0 +1,8 @@
+[localdevserver]
+
+[webserver]
+
+[dbserver]
+
+[all:vars]
+stage=production

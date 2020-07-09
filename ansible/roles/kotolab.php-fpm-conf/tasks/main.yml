@@ -1,0 +1,26 @@
+---
+- name: Modify listen.owner and listen.group configuration
+  lineinfile:
+    path: "{{ path_to_www_conf }}"
+    regexp: "^{{ item.regexp }}"
+    insertafter: "^;{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: 'listen\.owner\s*='
+      line: "listen.owner={{ php_fpm_www_conf_listen_owner }}"
+    - regexp: 'listen\.group\s*='
+      line: "listen.group={{ php_fpm_www_conf_listen_group }}"
+  notify: restart php-fpm
+
+- name: Disable POSIX ACL configuration
+  lineinfile:
+    path: "{{ path_to_www_conf }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backrefs: yes
+  with_items:
+    - regexp: '^(listen\.acl_users.*)$'
+      line: ';\1'
+    - regexp: '^(listen\.acl_groups.*)$'
+      line: ';\1'

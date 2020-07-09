@@ -1,0 +1,8 @@
+secret:
+  mysql_root_password: "rootpasswd"
+  mysql_users:
+    - name: "okeiko"
+      host: "%"
+      password: "okeikopasswd"
+      priv: "*.*:ALL"
+      append_privs: yes

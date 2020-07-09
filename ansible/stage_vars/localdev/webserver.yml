@@ -1,0 +1,5 @@
+server_name: "192.168.33.51"
+
+service_nginx_vhost_csp_header: ''
+
+service_public_path: "/opt/okeiko/public"

@@ -1,0 +1,18 @@
+---
+- name: Add curl update repository
+  template:
+    src: city-fan.repo.j2
+    dest: '/etc/yum.repos.d/city-fan.repo'
+
+- name: Upate curl
+  package:
+    name: curl
+    state: latest
+    enablerepo: city-fan,epel
+    
+- name: Change composer mirror
+  shell: /usr/local/bin/composer config -g repos.packagist composer https://packagist.jp
+
+- name: Install pretissimo
+  shell: /usr/local/bin/composer global require hirak/prestissimo
+  become: no

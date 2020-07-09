@@ -1,0 +1,8 @@
+oh_my_zsh_theme: frisk
+oh_my_zsh_plugins: [git, composer, common-aliases, npm]
+users:
+  - username: root
+  - username: "{{ execute_user }}"
+
+firewalld_allow_services:
+  - { service: "ldap" }

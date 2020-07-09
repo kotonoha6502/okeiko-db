@@ -1,0 +1,11 @@
+---
+- hosts: localdevserver
+  become: yes
+  become_user: root
+  pre_tasks:
+    - include_vars: "stage_vars/{{ stage }}/localdevserver.yml"
+  ignore_errors: yes
+  roles:
+    - gantsign.oh-my-zsh
+    - kotolab.fast-composer
+    - marcelnijenhof.firewalld

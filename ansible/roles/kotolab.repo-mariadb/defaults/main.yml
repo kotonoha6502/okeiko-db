@@ -1,0 +1,4 @@
+---
+workspace: /root
+mariadb_repo_config_script_url: "https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
+mariadb_repofile_path: "/etc/yun.repos.d/mariadb.repo"

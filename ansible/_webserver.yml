@@ -1,0 +1,20 @@
+---
+- hosts: webserver
+  become: yes
+  become_user: root
+  pre_tasks:
+    - include_vars: "stage_vars/{{ stage }}/webserver.yml"
+  ignore_errors: yes
+  roles:
+    - kotolab.www-data
+    - geerlingguy.git
+    - geerlingguy.nginx
+    - geerlingguy.redis
+    - geerlingguy.php-versions
+    - geerlingguy.php
+    - kotolab.php-fpm-conf
+    - geerlingguy.composer
+    - geerlingguy.nodejs
+    - ocha.yarn
+    - kotolab.service
+    - marcelnijenhof.firewalld

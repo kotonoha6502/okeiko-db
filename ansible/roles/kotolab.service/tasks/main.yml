@@ -1,0 +1,8 @@
+---
+- name: Make deploy directory.
+  file: 
+    path: "{{ service_deploy_path}}"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory

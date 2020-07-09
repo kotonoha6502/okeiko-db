@@ -1,0 +1,12 @@
+commom_packages_state: latest
+common_packages:
+  - make
+  - autoconf
+  - curl
+
+common_login_defs:
+  UID_MIN: 500
+  SYS_UID_MAX: 499
+  GID_MIN: 500
+  SYS_GID_MA: 499
+  

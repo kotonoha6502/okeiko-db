@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  pre_tasks:
+    - include_vars: "stage_vars/{{ stage }}/all.yml"
+    - include_vars: "stage_vars/{{ stage }}/private.yml"
+  ignore_errors: yes
+  roles:
+    - kotolab.common
+    - ericsysmin.chrony
+    - yatesr.timezone
+    - geerlingguy.repo-epel
+    - geerlingguy.repo-remi
+    

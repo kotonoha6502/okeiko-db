@@ -1,0 +1,13 @@
+local ansible_connection=local
+
+[localdevserver]
+local
+
+[webserver]
+local
+
+[dbserver]
+local
+
+[all:vars]
+stage=localdev

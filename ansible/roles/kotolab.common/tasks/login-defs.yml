@@ -1,0 +1,8 @@
+---
+- name: Configure longin.defs
+  lineinfile:
+    dest: "/etc/login.defs"
+    regexp: "^{{ item.key|upper }}"
+    line: "{{ item.key|upper }}\t{{ item.value }}"
+  when: item.value
+  with_dict: "{{ common_login_defs }}"

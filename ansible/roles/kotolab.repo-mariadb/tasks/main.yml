@@ -1,0 +1,22 @@
+---
+- name: Check if MariaDB repo is already configured
+  stat:
+    path: "{{ mariadb_repofile_path }}"
+  register: mariadb_repofile_result
+
+- name: Download MariaDB repo configuration script for YUM
+  get_url:
+    url: "{{ mariadb_repo_config_script_url }}"
+    dest: "{{ workspace }}/mariadb_repo_setup"
+    mode: 0777
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 10
+  when: not mariadb_repofile_result.stat.exists
+
+- name: Configure MariaDB repo for YUM
+  command: >
+    ./mariadb_repo_setup
+    chdir={{ workspace }}
+  when: not mariadb_repofile_result.stat.exists

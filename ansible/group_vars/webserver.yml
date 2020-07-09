@@ -1,0 +1,137 @@
+---
+# Geerlingguy.git
+git_install_from_source: true
+git_install_path: "/usr"
+git_version: "2.24.0"
+git_install_from_source_force_update: true
+
+# geerlingguy.nginx
+nginx_csp_header: "add_header Content-Serucity-Policy \"default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; Style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;\" always;"
+nginx_user: "www-data"
+nginx_server_tokens: "off"
+nginx_remove_default_vhost: true
+nginx_log_format: |
+  '$remote_addr - $sent_http_x_username [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for" $request_time'
+
+nginx_vhosts:
+  - listen: "443 ssl http2"
+    server_name: "{{ server_name }}"
+    root: "{{ service_deploy_path }}/public"
+    index: "index.php index.html index.htm"
+    template: "{{ nginx_vhost_template }}"
+    filename: "{{ server_name }}.conf"
+    extra_parameters: |
+      # Secure Headers
+      add_header X-Frame-Options DENY always;
+      add_header X-XSS-Protection "1; mode=block" always;
+      add_header X-Content-Type-Options nosniff always;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      {{ service_nginx_vhost_csp_header }}
+
+      # Diable IE compatibility mode
+      add_header X-UA-Compatible "IE=Edge,chrome=1" always;
+
+      charset utf-8;
+
+      client_max_body_size 50M;
+
+      # All request
+
+      location / {
+        try_files $uri $uri/ /index.php?$query_string;
+        gzip on;
+        gzip_types text/css application/javascript application/json application/font-woff application/font-tff image/gif image/png image/jpeg application/octet-stream;
+      }
+
+      # Disable log for favicon and robots.txt request
+      location = /favicon.ico { access_log off; log_not_found off; }
+      location = /robots.txt { access_log off; log_not_found off; }
+      location ~ /static/icon-.* { access_log off; log_not_found off; }
+
+      # php-fpm proxy
+      location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $realpath_root/index.php;
+        fastcgi_param PATHINFO $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $realpath_root$fastcgi_path_info;
+        include fastcgi_params;
+        fastcgi_read_timeout 120;
+      }
+
+      # Enable gzip_static for css and js resource
+      location ~ \.(css|js)$ {
+        gzip_static always;
+        gunzip on;
+      }
+
+      location ~ /(mix-manifest.json|web.config) {
+        deny all;
+      }
+
+      location ~ /\.(?!well-known).* {
+        deny all;
+      }
+
+# geerlingguy.php-versions
+php_version: "7.4"
+
+# geerlingguy.php
+php_packages:
+  - php
+  - php-mysqlnd
+  - php-mbstring
+  - php-gd
+  - php-xml
+  - php-xmlrpc
+  - php-fpm
+  - php-opcache
+  - php-apcu
+  - php-zip
+  - unzip
+  - php-pear
+  - php-bcmath
+  - php-ctype
+  - php-json
+  - php-openssl
+  - php-pdo
+  - php-tokenizer
+  - php-ldap
+  - php-devel
+
+php_packages_state: "latest"
+php_enable_webserver: false
+php_enable_php_fpm: true
+php_date_timezone: "Asia/Tokyo"
+php_upload_max_filesize: "50M"
+php_post_max_size: "50M"
+php_display_errors: "On"
+php_fpm_pool_user: "www-data"
+php_fpm_pool_group: "www-data"
+php_fpm_listen: "/var/run/php-fpm/php-fpm.sock"
+php_expose_php: "Off"
+php_memory_limit: "2048M"
+php_max_execution_time: "120"
+
+php_fpm_listen_owner: "www-data"
+php_fpm_listen_group: "www-data"
+
+# geerlingguy.composer
+composer_keep_updated: true
+
+# geerlingguy.nodejs
+nodejs_version: "12.x"
+
+# geerlingguy.redis
+redis_enablerepo: epel
+
+# kotolab.service
+service_deploy_path: /opt/okeiko
+
+# marcelnijenhof.firewalld
+firewalld_allow_services:
+  - { service: http }
+  - { service: https }

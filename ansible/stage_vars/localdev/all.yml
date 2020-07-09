@@ -1,0 +1,3 @@
+execute_user: vagrant
+
+firewalld_disable: false

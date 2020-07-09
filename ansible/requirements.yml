@@ -1,0 +1,17 @@
+---
+- src: yatesr.timezone
+- src: ericsysmin.chrony
+- src: geerlingguy.repo-epel
+- src: geerlingguy.repo-remi
+- src: geerlingguy.mysql
+- src: geerlingguy.nginx
+- src: geerlingguy.redis
+- src: geerlingguy.php
+- src: geerlingguy.php-versions
+- src: geerlingguy.php-mysql
+- src: geerlingguy.git
+- src: geerlingguy.nodejs
+- src: geerlingguy.composer
+- src: gantsign.oh-my-zsh
+- src: ocha.yarn
+- src: marcelnijenhof.firewalld
