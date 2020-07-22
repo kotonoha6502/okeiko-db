@@ -1,48 +1,44 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
+  <q-layout
+    view="hHh LpR fFf"
+  >
+    <q-header
+      elevated
+      class="bg-primary text-white"
+      height-hint="98"
     >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
+      <q-toolbar>
+        <q-toolbar-title>
+          お稽古管理システム
+        </q-toolbar-title>
+      </q-toolbar>
+
+      <q-tabs
+        align="left"
+        inline-label
+      >
+        <q-route-tab
+          to="/"
+          icon="home"
+          label="ホーム"
         />
-      </q-list>
-    </q-drawer>
+        <q-route-tab
+          to="/search"
+          icon="search"
+          label="検索"
+        />
+        <q-route-tab
+          to="/upload"
+          icon="backup"
+          label="アップロード"
+        />
+      </q-tabs>
+    </q-header>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
   </q-layout>
 </template>
 
