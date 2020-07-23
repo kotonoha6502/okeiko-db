@@ -6,8 +6,15 @@
       class="row"
     >
       <div
-        class="col-10 offset-1"
+        class="offset-1 col-10"
       >
+        <div
+          class="text-h5 text-blue-7"
+          style="margin: 24px 0 16px; font-weight: bold"
+        >
+          アップロード
+        </div>
+
         <q-input
           label="お稽古日"
           v-model="recordData.recordDate"
@@ -33,53 +40,24 @@
           </template>
         </q-input>
 
-        <file-drop-form />
+        <file-drop-form
+          multiple
+          icon="backup"
+        />
 
         <div
-          class="row no-wrap items-center text-h6"
+          class="row no-wrap items-center text-h6 text-blue-6 q-mt-lg"
         >
-          稽古内容
-          <q-btn
-            round
-            flat
-            dense
-            icon="add"
-            color="primary"
-            class="q-ml-md"
+          <q-icon
+            name="edit"
+            class="q-mr-sm"
           />
+          お稽古詳細
         </div>
-        <div
-          class="row no-wrap items-center q-gutter-md q-mb-md"
-        >
-          <div
-            class="col-3"
-          >
-            <q-select
-              value="null"
-              :options="[{ label: '唄', value: 1 }, { label: '三味線', value: 2 }]"
-            />
-          </div>
-          <div
-            class="col-7"
-          >
-            <q-input
-              label="曲目"
-              value=""
-              clearable
-            />
-          </div>
-          <div
-            class="col-auto"
-          >
-            <q-btn
-              flat
-              round
-              dense
-              color="negative"
-              icon="close"
-            />
-          </div>
-        </div>
+
+        <edit-detail-form
+          v-model="recordData"
+        />
 
         <div
           class="row no-wrap items-center q-gutter-md q-mb-md"
@@ -123,21 +101,23 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, ref} from "@vue/composition-api"
-import FileDropForm from "components/FileDropForm.vue"
+import {defineComponent, reactive} from "@vue/composition-api"
+import FileDropForm from "../components/FileDropForm.vue"
+import EditDetailForm from "../components/Upload/EditDetailForm.vue"
+import {RecordData} from "../models/OkeikoData"
 
 export default defineComponent({
   name: 'UploadPage',
-  components: {FileDropForm},
+  components: {FileDropForm, EditDetailForm},
   setup () {
-    const recordData = reactive({
-      recordDate: null,
-      uta: [],
-      shamisen: [],
+    const recordData = reactive<RecordData>({
+      recordDate: undefined,
+      songList: [],
       remark: ""
     })
+
     return {
-      recordData
+      recordData,
     }
   }
 })
