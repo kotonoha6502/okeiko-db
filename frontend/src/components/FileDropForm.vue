@@ -1,47 +1,89 @@
 <template>
-  <div
-    class="q-pa-md text-center relative-position container"
-    :style="style"
-    tabIndex="0"
-    @click="__click"
-    @keydown.enter="__click"
-    @focus="__activate"
-    @mouseenter="__activate"
-    @blur="__deactivate"
-    @mouseleave="__deactivate"
-  >
-    <slot>
-      <div
-        :style="innerStyle"
+  <div>
+    <div
+      v-if="!hideWhenNotEmpty || (hideWhenNotEmpty && valueModel.length <= 0) "
+      class="q-pa-md q-mb-sm text-center relative-position container"
+      :style="style"
+      tabIndex="0"
+      @click="__click"
+      @keydown.enter="__click"
+      @focus="__activate"
+      @mouseenter="__activate"
+      @blur="__deactivate"
+      @mouseleave="__deactivate"
+      @dragover.prevent="__activate"
+      @dragleave.prevent="__deactivate"
+      @drop.stop.prevent="__drop"
+    >
+      <slot>
+        <div
+          :style="innerStyle"
+        >
+          <q-icon
+            size="sm"
+            :name="icon"
+            class="q-mr-sm"
+          />
+          {{ text }}
+        </div>
+      </slot>
+      <input
+        type="file"
+        style="display: none"
+        ref="nativeRef"
+        :multiple="multiple"
+        @input.stop.prevent="e => addFile(e.target.files)"
+      />
+    </div>
+
+    <template v-if="valueModel.length > 0">
+      <slot
+        name="containing-files"
+        v-bind="containingFilesSlotScopes"
       >
-        <q-icon
-          size="sm"
-          :name="icon"
-          class="q-mr-sm"
-        />
-        ここにファイルをドラッグ&ドラップするか、クリックして選択
-      </div>
-    </slot>
-    <input
-      type="file"
-      style="display: none"
-      ref="nativeRef"
-      :multiple="multiple"
-    />
+      </slot>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watchEffect} from '@vue/composition-api'
+import {computed, defineComponent, PropType, ref, watchEffect} from '@vue/composition-api'
+import {validate} from "src/hooks/useValidationHook";
 
 export default defineComponent({
   name: "FileDropForm",
   props: {
-    multiple: Boolean,
+    // content
     icon: {
       type: String,
       default: 'publish'
-    }
+    },
+    text: {
+      type: String,
+      default: "ここにファイルをドラッグ&ドラップするか、クリックして選択"
+    },
+    // behavior
+    multiple: Boolean,
+    add: Boolean,
+    hideWhenNotEmpty: Boolean,
+    rules: {
+      type: Array as PropType<Array<(v: File) => (Boolean|string)>>,
+      default: () => []
+    },
+    extensions: {
+      type: Array as PropType<Array<string>>,
+      default: () => []
+    },
+    maxFileSize: Number,
+
+    // model
+    value: {
+      type: Array as PropType<Array<File>>,
+      default: () => [],
+    },
+
+    // state
+
   },
   setup (props, ctx) {
     const clicked = ref(false)
@@ -109,15 +151,77 @@ export default defineComponent({
       }
     }
 
+    const __mkNewValue = (files: FileList) => {
+      const uploaded = props.add
+        ? [...valueModel.value, ...Array.from(files)]
+        : Array.from(files)
+
+      if (! props.multiple) {
+        uploaded.splice(1)
+      }
+
+      return uploaded
+    }
+
+    const addFile = (files: FileList) => {
+      const newValue = __mkNewValue(files)
+      if (newValue.length > 0) {
+        valueModel.value = newValue
+      }
+      nativeRef.value = null
+    }
+
+    const validationRules = [
+      (file: File) => (props.maxFileSize === undefined
+        || file.size <= props.maxFileSize
+        || 'アップロード可能なファイルサイズを超えています'),
+
+      (file: File) => { debugger; return (props.extensions === undefined
+        || props.extensions.includes(file.name.split('.').slice(-1))
+        || `拡張子が${props.extensions.join(',')}のいずれかであるファイルをアップロードしてください`)},
+
+      ...props.rules,
+    ]
+
+    const [valueModel, errors] = validate<File[]>(validationRules, {
+      get() :File[] {
+        return props.value
+      },
+      set (v: File[]) :void {
+        ctx.emit('input', v)
+      }
+    })
+
+    const __drop = (e: DragEvent) => {
+      if (e.dataTransfer?.files instanceof FileList) {
+        addFile(e.dataTransfer.files)
+      }
+    }
+
+    const containingFilesSlotScopes = computed(() => {
+      return {
+        files: valueModel.value,
+        count: valueModel.value.length,
+        emitValue: (files: Array<File>) => ctx.emit('input', files),
+        clear: () => ctx.emit('input', []),
+        empty: () => valueModel.value.length > 0,
+      }
+    })
+
     return {
       clicked,
       active,
       style,
       innerStyle,
       nativeRef,
+      valueModel,
+      errors,
+      containingFilesSlotScopes,
+      addFile,
       __click,
       __activate,
-      __deactivate
+      __deactivate,
+      __drop
     }
   }
 })

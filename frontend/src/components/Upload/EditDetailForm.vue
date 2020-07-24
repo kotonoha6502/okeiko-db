@@ -8,6 +8,33 @@
         label="曲目を追加"
       />
     </div>
+
+    <!-- お稽古日 -->
+    <q-input
+      label="お稽古日"
+      v-model="recordData.recordDate"
+      mask="date"
+      :rules="['date']"
+    >
+      <template v-slot:append>
+        <q-icon
+          name="event"
+          class="cursor-pointer"
+        >
+          <q-popup-proxy
+            ref="qDateProxy"
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            <q-date
+              v-model="recordData.recordDate"
+              @input="() => $refs.qDateProxy.hide()"
+            />
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+
     <!-- 曲目追加フォーム -->
     <div
       class="row no-wrap items-center q-gutter-md q-mb-md"
@@ -65,13 +92,13 @@ export default defineComponent({
   },
   setup (props, ctx) {
     const songList = ref<Array<OkeikoDataModel>>([
-      { category: 'uta', title: "" }
+      { category: 'both', title: "" }
     ])
 
     const songCategoryOptions = computed(() => [
       { value: 'both', text: '唄、三味線' },
+      { value: 'shamisen', text: '三味線'},
       { value: 'uta', text: '唄' },
-      { value: 'shamisen', text: '三味線'}
     ])
 
     const songListModel = computed({

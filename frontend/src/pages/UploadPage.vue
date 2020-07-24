@@ -8,52 +8,29 @@
       <div
         class="offset-1 col-10"
       >
-        <div
-          class="text-h5 text-blue-7"
-          style="margin: 24px 0 16px; font-weight: bold"
-        >
-          アップロード
-        </div>
 
-        <q-input
-          label="お稽古日"
-          v-model="recordData.recordDate"
-          mask="date"
-          :rules="['date']"
-        >
-          <template v-slot:append>
-            <q-icon
-              name="event"
-              class="cursor-pointer"
-            >
-              <q-popup-proxy
-                ref="qDateProxy"
-                transition-show="scale"
-                transition-hide="scale"
-              >
-                <q-date
-                  v-model="recordData.recordDate"
-                  @input="() => $refs.qDateProxy.hide()"
-                />
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
+        <headline>アップロード</headline>
 
         <file-drop-form
-          multiple
+          v-model="uploadedFile"
           icon="backup"
-        />
-
-        <div
-          class="row no-wrap items-center text-h6 text-blue-6 q-mt-lg"
+          text="ここにお稽古の録音ファイルをドラッグ&ドロップしてください"
+          hide-when-not-empty
         >
-          <q-icon
-            name="edit"
-            class="q-mr-sm"
-          />
+          <template
+            #containing-files="{ emitValue, clear }"
+          >
+            <q-btn
+              @click="clear"
+            >
+              Fire!
+            </q-btn>
+          </template>
+        </file-drop-form>
+
+        <section-title>
           お稽古詳細
-        </div>
+        </section-title>
 
         <edit-detail-form
           v-model="recordData"
@@ -101,14 +78,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive} from "@vue/composition-api"
+import {defineComponent, reactive, ref} from "@vue/composition-api"
 import FileDropForm from "../components/FileDropForm.vue"
 import EditDetailForm from "../components/Upload/EditDetailForm.vue"
 import {RecordData} from "../models/OkeikoData"
+import Headline from "components/Headline.vue";
+import SectionTitle from "components/SectionTitle.vue";
 
 export default defineComponent({
   name: 'UploadPage',
-  components: {FileDropForm, EditDetailForm},
+  components: {FileDropForm, EditDetailForm, Headline, SectionTitle},
   setup () {
     const recordData = reactive<RecordData>({
       recordDate: undefined,
@@ -116,8 +95,11 @@ export default defineComponent({
       remark: ""
     })
 
+    const uploadedFile = ref<Array<File>>([])
+
     return {
       recordData,
+      uploadedFile,
     }
   }
 })
