@@ -16,6 +16,8 @@
           icon="backup"
           text="ここにお稽古の録音ファイルをドラッグ&ドロップしてください"
           hide-when-not-empty
+          accept=".pdf,image/*"
+          :rules="[file => (file.name.match('test.*') !== null || 'ファイル名はtest.*でオナシャス！')]"
         >
           <template
             #containing-files="{ emitValue, clear }"
@@ -33,23 +35,8 @@
         </section-title>
 
         <edit-detail-form
-          v-model="recordData"
+          v-model="recordDetailData"
         />
-
-        <div
-          class="row no-wrap items-center q-gutter-md q-mb-md"
-        >
-          <div
-            class="col-all"
-          >
-            <q-input
-              label="備考"
-              filled
-              v-model="recordData.remark"
-              type="textarea"
-            />
-          </div>
-        </div>
 
         <div
           class="row no-wrap items-center q-gutter-md"
@@ -79,26 +66,26 @@
 
 <script lang="ts">
 import {defineComponent, reactive, ref} from "@vue/composition-api"
-import FileDropForm from "../components/FileDropForm.vue"
-import EditDetailForm from "../components/Upload/EditDetailForm.vue"
-import {RecordData} from "../models/OkeikoData"
+import FileDropForm from "components/FileDropForm.vue"
+import EditDetailForm from "components/Upload/EditDetailForm.vue"
 import Headline from "components/Headline.vue";
 import SectionTitle from "components/SectionTitle.vue";
+import {RecordDetail} from "src/models/OkeikoData"
 
 export default defineComponent({
   name: 'UploadPage',
   components: {FileDropForm, EditDetailForm, Headline, SectionTitle},
   setup () {
-    const recordData = reactive<RecordData>({
+    const recordDetailData = reactive<RecordDetail>({
       recordDate: undefined,
-      songList: [],
+      songDataList: [ { category: 'both', title: '' } ],
       remark: ""
     })
 
     const uploadedFile = ref<Array<File>>([])
 
     return {
-      recordData,
+      recordDetailData,
       uploadedFile,
     }
   }

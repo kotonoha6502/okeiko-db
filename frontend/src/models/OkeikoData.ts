@@ -1,12 +1,12 @@
-export type SongCategory = 'uta' | 'shamisen' | 'both'
-
-export interface OkeikoDataModel {
-  category: SongCategory;
-  title: string;
+export interface RecordDetail {
+  recordDate: undefined|Date;
+  songDataList: Array<SongData>;
+  remark: string;
 }
 
-export interface RecordData {
-  recordDate: Date|undefined;
-  songList: Array<OkeikoDataModel>;
-  remark: string;
+export type SongCategory = 'uta'  | 'shamisen' | 'both'
+
+export interface SongData {
+  category: SongCategory;
+  title: string;
 }

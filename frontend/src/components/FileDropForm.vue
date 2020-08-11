@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="!hideWhenNotEmpty || (hideWhenNotEmpty && valueModel.length <= 0) "
-      class="q-pa-md q-mb-sm text-center relative-position container"
+      class="q-px-xl q-py-md q-mb-sm text-center relative-position container"
       :style="style"
       tabIndex="0"
       @click="__click"
@@ -15,6 +15,17 @@
       @dragleave.prevent="__deactivate"
       @drop.stop.prevent="__drop"
     >
+      <div
+        v-if="hasErrors"
+        style="position: absolute; top: 0; right: 0"
+        class="q-mt-sm q-mr-sm"
+      >
+        <q-icon
+          name="error"
+          size="xs"
+          color="negative"
+        />
+      </div>
       <slot>
         <div
           :style="innerStyle"
@@ -31,24 +42,120 @@
         type="file"
         style="display: none"
         ref="nativeRef"
+        :accept="accept"
         :multiple="multiple"
         @input.stop.prevent="e => addFile(e.target.files)"
       />
     </div>
-
-    <template v-if="valueModel.length > 0">
-      <slot
-        name="containing-files"
-        v-bind="containingFilesSlotScopes"
+    <transition
+      appear
+      enter-active-class="animated fadeInDown"
+      leave-active-class="animated fadeOutUp"
+    >
+      <div
+        v-if="hasErrors"
+        class="file-drop-form__validation-errors"
       >
-      </slot>
-    </template>
+        <slot
+          name="errors"
+          v-bind="{ errors, hasErrors }"
+        >
+          <ul class="q-mt-xs">
+            <li
+              v-for="(error, k) in errors"
+              :key="k"
+              class="text-caption"
+              style="color: var(--q-color-negative)"
+            >
+              {{ error }}
+            </li>
+          </ul>
+        </slot>
+      </div>
+    </transition>
+
+    <transition
+      name="expand"
+    >
+      <div
+        v-if="valueModel.length > 0"
+        class="file-drop-form__containing-file-list"
+      >
+        <slot
+          name="containing-files"
+          v-bind="containingFilesSlotScopes"
+        >
+        </slot>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, PropType, ref, watchEffect} from '@vue/composition-api'
-import {validate} from "src/hooks/useValidationHook";
+import {
+  computed,
+  defineComponent,
+  isRef,
+  PropType,
+  Ref,
+  ref,
+  watchEffect,
+  WritableComputedRef
+} from '@vue/composition-api'
+import {sleep} from "src/utils/async";
+
+type Rule<T> = (v: T) => (true|string)
+interface Option<T> {
+  get: () => T,
+  set: (v: T) => void
+}
+function validate(
+  rules: Rule<File>[],
+  target: Option<File[]>|WritableComputedRef<File[]>
+): [ WritableComputedRef<File[]>, Ref<string[]> ] {
+  const base = isRef(target) ? target : computed(target)
+
+  const errors = ref<string[]>([])
+
+  const validated = computed({
+    get () {
+      return base.value
+    },
+    set (vs: File[]) : void {
+      errors.value  = []
+
+      const applyRules = (v: File) => rules.reduce((acc: string[], rule)  :string[] => {
+        const result = rule(v)
+        return result === true
+          ? acc
+          : [...acc, result]
+      }, [])
+
+      errors.value = vs.flatMap(applyRules)
+
+      if (errors.value.length <= 0) {
+        base.value = vs
+      }
+    }
+  })
+
+  return [ validated, errors ]
+}
+
+function applyAccept (accepts: string[], f: File) : boolean {
+  const ext = `.${f.name.split(".").slice(-1)[0]}`
+
+  for (const accept of accepts) {
+    if (accept.match(/¥.[a-zA-Z0-9]+$/) && accept === ext) {
+      return true
+    }
+
+    if (f.type.match(accept))  {
+      return true
+    }
+  }
+  return false
+}
 
 export default defineComponent({
   name: "FileDropForm",
@@ -67,12 +174,16 @@ export default defineComponent({
     add: Boolean,
     hideWhenNotEmpty: Boolean,
     rules: {
-      type: Array as PropType<Array<(v: File) => (Boolean|string)>>,
+      type: Array as PropType<Array<Rule<File>>>,
       default: () => []
     },
     extensions: {
       type: Array as PropType<Array<string>>,
       default: () => []
+    },
+    accept: {
+      type: String,
+      default: ""
     },
     maxFileSize: Number,
 
@@ -115,22 +226,32 @@ export default defineComponent({
     const style = computed(() => {
       const background = clicked.value
         ? '#e2e7f9'
-        : ( active.value
+        : ( active.value || errors.value.length > 0
           ? '#f4f4f4'
           : 'inherit'
           )
 
-      const borderColor = clicked.value
-        ? '#134c88'
-        : (active.value
+      const borderColor =errors.value.length > 0
+        ? 'var(--q-color-negative)'
+        : (clicked.value
           ? '#134c88'
-          : '#7e7e7e'
+          : (active.value
+            ? '#134c88'
+            : '#7e7e7e'
+            )
+          )
+
+      const color = errors.value.length > 0
+        ? 'var(--q-color-negative)'
+        : ( active.value
+          ? '#134c88'
+          : '#5e5e5e'
           )
 
       return {
         border: `thin dashed ${borderColor}`,
         background,
-        color: active.value ? '#134c88' : '#5e5e5e',
+        color,
         borderRadius: '3px',
         cursor: 'pointer',
         outline: 'none',
@@ -163,7 +284,12 @@ export default defineComponent({
       return uploaded
     }
 
-    const addFile = (files: FileList) => {
+    const addFile = async (files: FileList) => {
+      errors.value = []
+
+      // エラー表示を消すアニメーション完了を待つ
+      await sleep(200)
+
       const newValue = __mkNewValue(files)
       if (newValue.length > 0) {
         valueModel.value = newValue
@@ -171,19 +297,23 @@ export default defineComponent({
       nativeRef.value = null
     }
 
-    const validationRules = [
+    const acceptComputed = computed(() => {
+      return props.accept.split(/\s+|,/).filter(c => c.length>0)
+    })
+
+    const validationRules: Array<Rule<File>> = [
       (file: File) => (props.maxFileSize === undefined
         || file.size <= props.maxFileSize
         || 'アップロード可能なファイルサイズを超えています'),
 
-      (file: File) => { debugger; return (props.extensions === undefined
-        || props.extensions.includes(file.name.split('.').slice(-1))
-        || `拡張子が${props.extensions.join(',')}のいずれかであるファイルをアップロードしてください`)},
+      (file: File) => (acceptComputed.value.length <= 0
+        || applyAccept(acceptComputed.value, file)
+        || `アップロード可能なファイル形式ではありません`),
 
       ...props.rules,
     ]
 
-    const [valueModel, errors] = validate<File[]>(validationRules, {
+    const [valueModel, errors] = validate(validationRules, {
       get() :File[] {
         return props.value
       },
@@ -191,6 +321,8 @@ export default defineComponent({
         ctx.emit('input', v)
       }
     })
+
+    const hasErrors = computed(() => errors.value.length > 0)
 
     const __drop = (e: DragEvent) => {
       if (e.dataTransfer?.files instanceof FileList) {
@@ -216,7 +348,9 @@ export default defineComponent({
       nativeRef,
       valueModel,
       errors,
+      hasErrors,
       containingFilesSlotScopes,
+      acceptComputed,
       addFile,
       __click,
       __activate,
@@ -228,5 +362,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 </style>

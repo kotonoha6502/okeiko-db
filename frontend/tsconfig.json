@@ -2,5 +2,12 @@
   "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
     "baseUrl": ".",
+    "lib": [
+      "es2019",
+      "DOM",
+      "ES6" ,
+      "DOM.Iterable",
+      "ScriptHost"
+    ]
   }
 }
