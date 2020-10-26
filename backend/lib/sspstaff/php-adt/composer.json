@@ -1,0 +1,29 @@
+{
+    "name": "sspstaff/php-adt",
+    "description": "Algebraic-Data-Types support for PHP",
+    "keywords": ["ADT"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "miyaji_k",
+            "email": "miyaji_k@skygroup.jp"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "SspStaff\\ADT": "src/"
+        },
+        "files": ["src/helpers.php"]
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-ci": "vendor/bin/phpunit --coverage-text"
+    },
+    "extra": {
+    }
+}

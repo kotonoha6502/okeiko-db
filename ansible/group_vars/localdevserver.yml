@@ -4,5 +4,11 @@ users:
   - username: root
   - username: "{{ execute_user }}"
 
+# geerlingguy.php-xdebug
+php_xdebug_remote_enable: "true"
+php_xdebug_remote_host: "192.168.33.1"
+php_xdebug_remote_port: "9000"
+php_xdebug_idekey: "okeikodb"
+
 firewalld_allow_services:
   - { service: "ldap" }

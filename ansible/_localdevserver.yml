@@ -7,5 +7,6 @@
   ignore_errors: yes
   roles:
     - gantsign.oh-my-zsh
-    - kotolab.fast-composer
+    - geerlingguy.php-xdebug
+#    - kotolab.fast-composer
     - marcelnijenhof.firewalld
