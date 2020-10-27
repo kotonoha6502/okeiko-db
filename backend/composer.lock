@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1ef0afd601f47f3e9e49c2dbade9f77",
+    "content-hash": "1d6f853248eaeffcedffcc1e4e88747a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2192,6 +2192,32 @@
                 }
             ],
             "time": "2020-08-18T17:17:46+00:00"
+        },
+        {
+            "name": "sspstaff/php-adt",
+            "version": "0.1.0",
+            "dist": {
+                "type": "path",
+                "url": "./lib/sspstaff/php-adt",
+                "reference": "96e62a41cdaa7aef35cd3b925e7c97a302aee50e"
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SspStaff\\ADT\\": "src/"
+                },
+                "files": [
+                    "src/helper.php"
+                ]
+            },
+            "description": "Algebraic-Data-Types support for PHP",
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "swiftmailer/swiftmailer",

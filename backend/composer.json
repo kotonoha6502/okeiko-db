@@ -13,7 +13,8 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "sspstaff/php-adt": "^0.1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -35,7 +36,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "OkeikoDb\\": "src/"
         },
         "classmap": [
             "database/seeds",
@@ -47,6 +49,15 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./lib/sspstaff/php-adt",
+            "options": {
+                "symlink": false
+            }
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {

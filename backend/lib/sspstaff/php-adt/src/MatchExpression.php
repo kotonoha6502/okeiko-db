@@ -1,17 +1,16 @@
 <?php
 
 
-namespace SspStaff\Support\MatchExpression;
+namespace SspStaff\ADT;
 
 use Closure;
+use SspStaff\ADT\Exceptions\PatternMatchException;
 use SspStaff\ADT\Internal\CaseEval;
 use SspStaff\ADT\Internal\CaseList;
 use SspStaff\ADT\Internal\CaseList\Cons;
 use SspStaff\ADT\Internal\NonEmpty;
 
 /**
- * Class MatchExpression
- * @package SspStaff\Support\MatchExpression
  * @template T
  * @template R
  */
@@ -68,16 +67,10 @@ class MatchExpression
                 continue;
             }
 
-            switch (true) {
-                case $h instanceof CaseEval\Default_:
-                    return $h->getEval()();
-            }
-
-            $caseList = $t;
+            return $h->eval($value);
         }
+
+        throw new PatternMatchException("Non-exhaustive pattern matching");
     }
 
-    private function go () {
-
-    }
 }

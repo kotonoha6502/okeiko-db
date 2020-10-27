@@ -4,8 +4,6 @@
 namespace SspStaff\ADT\Internal;
 
 /**
- * Class CaseList
- * @package SspStaff\Support\MatchExpression
  * @template T
  */
 abstract class CaseList

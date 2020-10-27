@@ -5,8 +5,6 @@ namespace SspStaff\ADT\Internal\CaseEval;
 use SspStaff\ADT\Internal\CaseEval;
 
 /**
- * Class Case_
- * @package SspStaff\ADT\Internal\CaseEval
  * @template R
  * @extends CaseEval<R>
  */

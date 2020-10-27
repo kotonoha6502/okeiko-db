@@ -3,9 +3,9 @@
 
 namespace SspStaff\ADT\Internal;
 
+use SspStaff\ADT\Exceptions\PatternMatchException;
+
 /**
- * Class CaseEval
- * @package SspStaff\ADT\Internal
  * @template R
  */
 abstract class CaseEval
@@ -50,14 +50,54 @@ abstract class CaseEval
         throw new \RuntimeException("Should not happen exception - pattern match failure");
     }
 
-    public function getEval(): \Closure
+    /**
+     * @param mixed $value
+     * @return R
+     */
+    public function eval($value)
     {
         switch (true) {
             case $this instanceof CaseEval\Case_:
-                return $this->eval;
+                return ($this->eval)(...$this->getConstructorArgs($value));
 
             case $this instanceof CaseEval\Default_:
-                return $this->eval;
+                return ($this->eval)();
         }
+
+        throw new \RuntimeException("Should not happen exception - pattern match failure");
+    }
+
+    /**
+     * @param mixed $value
+     * @return array
+     */
+    private function getConstructorArgs ($value) :array {
+        try {
+            $reflectionObject = new \ReflectionObject($value);
+        }
+        catch (\Throwable $e) {
+            throw new PatternMatchException("Should not happen exception");
+        }
+
+        $args = [];
+        $constructor = $reflectionObject->getConstructor();
+        if ($constructor instanceof \ReflectionMethod) {
+            foreach ($constructor->getParameters() as $parameter) {
+                try {
+                    $prop = $reflectionObject->getProperty($parameter->getName());
+                    $prop->setAccessible(true);
+                    $args[] = $prop->getValue($value);
+                }
+                catch (\ReflectionException $e) {
+                    throw new PatternMatchException(
+                        "Failed to re-produce arguments to data constructor",
+                        $e->getCode(),
+                        $e->getPrevious()
+                    );
+                }
+            }
+        }
+
+        return $args;
     }
 }

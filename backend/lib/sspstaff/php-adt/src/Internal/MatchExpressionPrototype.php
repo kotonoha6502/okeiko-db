@@ -1,16 +1,12 @@
 <?php
 
 
-namespace SspStaff\Support\MatchExpression;
+namespace SspStaff\ADT\Internal;
 
 
-use SspStaff\ADT\Internal\CaseEval;
-use SspStaff\ADT\Internal\CaseList;
-use SspStaff\ADT\Internal\NonEmpty;
+use SspStaff\ADT\MatchExpression;
 
 /**
- * Class MatchExpressionPrototype
- * @package SspStaff\Support\MatchExpression
  * @template T
  */
 class MatchExpressionPrototype
