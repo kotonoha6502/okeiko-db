@@ -3,8 +3,7 @@
 namespace OkeikoDb\Data;
 
 /**
- * Class Maybe
- * @package OkeikoDb\Data
+ * @ssp-adt
  * @template T
  */
 abstract class Maybe
@@ -17,9 +16,8 @@ abstract class Maybe
     }
 
     /**
-     * @template A
-     * @param A $value
-     * @return Maybe<A>
+     * @param T $value
+     * @return Maybe<T>
      */
     public static function just ($value) :Maybe {
         return new Maybe\Just($value);

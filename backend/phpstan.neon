@@ -1,6 +1,6 @@
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
-
+    - ./lib/sspstaff/php-adt/extension.neon
 parameters:
 
     paths:

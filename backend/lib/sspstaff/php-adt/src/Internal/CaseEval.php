@@ -11,7 +11,6 @@ use SspStaff\ADT\Exceptions\PatternMatchException;
 abstract class CaseEval
 {
     /**
-     * @template R
      * @param string $caseClass
      * @param \Closure(mixed...):R $eval
      * @return CaseEval<R>
@@ -21,7 +20,6 @@ abstract class CaseEval
     }
 
     /**
-     * @template R
      * @param \Closure():R $eval
      * @return CaseEval<R>
      */

@@ -44,6 +44,10 @@ class MatchExpression
         );
     }
 
+    /**
+     * @param Closure():R $eval
+     * @return MatchExpression<T, R>
+     */
     public function default (\Closure $eval) :MatchExpression {
         return new MatchExpression(
             $this->classname,

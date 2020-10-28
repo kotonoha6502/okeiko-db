@@ -1,0 +1,11 @@
+services:
+    -
+        class: SspStaff\ADT\PHPStan\Rules\ADTCaseClassRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SspStaff\ADT\PHPStan\Rules\ExhaustivePatternMatchRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SspStaff\ADT\PHPStan\Rules\ADTHelper

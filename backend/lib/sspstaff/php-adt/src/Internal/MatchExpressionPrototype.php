@@ -14,6 +14,10 @@ class MatchExpressionPrototype
     /** @var class-string<T>  */
     private $className;
 
+    /**
+     * MatchExpressionPrototype constructor.
+     * @param class-string<T> $className
+     */
     public function __construct (string $className) {
         $this->className = $className;
     }

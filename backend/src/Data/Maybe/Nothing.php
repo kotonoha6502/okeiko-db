@@ -6,6 +6,9 @@ namespace OkeikoDb\Data\Maybe;
 
 use OkeikoDb\Data\Maybe;
 
-final class Nothing extends Maybe
+/**
+ * @extends Maybe<mixed>
+ */
+class Nothing extends Maybe
 {
 }

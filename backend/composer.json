@@ -13,8 +13,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
-        "laravel/tinker": "^2.0",
-        "sspstaff/php-adt": "^0.1.0"
+        "laravel/tinker": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -41,7 +40,11 @@
         },
         "classmap": [
             "database/seeds",
-            "database/factories"
+            "database/factories",
+            "lib/sspstaff"
+        ],
+        "files": [
+            "lib/sspstaff/php-adt/src/helper.php"
         ]
     },
     "autoload-dev": {
